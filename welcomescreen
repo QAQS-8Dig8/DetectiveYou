@@ -1,0 +1,47 @@
+#I am having issues with pygame in conda but i think I should be able to fix fairly easily. 
+#I do not know if this will work for you or not. 
+#I think the syntax is correct but it is hard for me to test until I fix the conda issue
+
+
+import pygame
+pygame.init()
+
+#I think we need these two lines to keep the video frames from all playing at once
+#but I think we will probably have to adjust the value to get the right speed. 
+FPS = 60  #frames per second
+clock = pygame.time.Clock() 
+
+#create the gui and a title caption in the gui overhead bar 
+win = pygame.display.set_mode((500,500)) 
+pygame.display.set_caption('Detective You')
+
+#This I am unsure of. This should import the video into the gui and it should play one time through.
+loop = pygame.movie.Movie('welcomescreenloop.mp4')
+screen = pygame.display.set_mode(movie.get_size())
+welcome_loop = pygame.Surface(movie.get_size()).convert()
+movie.set_display(welcome_loop)
+movie.play()
+
+#we still need to add the begin button and lay it on top of the video while it plays. 
+#The video should loop untill the user clicks the button
+#also still need to add audio. The audio should not be part of the mp45 file because we don't 
+#want the song to stop and restart every 3 seconds
+
+
+#the idea here is just that we have a loop to make the video loop until the begin button, 
+#which doesn't exist yet, is clicked
+#I think we will also need more code to actuakky make it loop
+
+playing = True
+while playing:
+    for event in pygame.event.get():
+        if event.type == pygame.begin_button: #pretty sure this button syntax is wrong but you get the idea
+            movie.stop()
+            playing = False
+            
+
+    screen.blit(welcome_loop,(0,0)) #my understanding is that this makes the video fill the gui
+    pygame.display.update() #I don't know if we need this here but I watched a tutorial and it seemed important
+    clock.tick(FPS)
+    
+    # I think we need an if statement here the see if the movie is at the end and if it is to restart it
