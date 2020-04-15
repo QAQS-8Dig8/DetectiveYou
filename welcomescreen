@@ -1,47 +1,39 @@
-#so it turns out that the movie module for pygame was removed from the package a while ago and not replaced.
-#so for now, I just added an image instead of a video. My plan is to take the frames from the video
-#and add a for loop to loop through them so that it creates an animated effect. For now, here is the new code
-# It is working for me to the extent I have coded.
-#It should open a fullscreen gui with a background image and window header. The exit square is not working yet though, 
-#so you have to kill the code in python to close the window. It does minimize though.
-
 import os
 import pygame
 from pygame.locals import *
+import win32gui, win32con
 
+pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
-
 
 #create the gui and a title caption in the gui overhead bar 
 screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+hwnd = win32gui.GetForegroundWindow()
+win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
 pygame.display.set_caption('Detective You')
 
 #This loads the background image. 
 #Later we can adjust it for animation of some kind like a gif  or looping through a few images
 background = pygame.image.load('welcomescreen_Moment24.jpg')
 pygame.display.set_icon(background)
-
-#this makes it open in full screen mode
 screen.fill((0,0,0))
 screen.blit(pygame.transform.scale(background, (500, 500)), (0, 0))
 pygame.display.flip()
 
-#this keeps the background image on the screen and makes the image fill the window
+#this loads the audio track
+pygame.mixer.music.load("almamater.mp3")
+pygame.mixer.music.set_volume(1)
+pygame.mixer.music.play(-1)
+
 playing = True
 while playing:
     pygame.event.pump()
     for event in pygame.event.get():
         if event.type == pygame.quit: 
             playing = False
-        #elif event.type == pygame.button(): #button still needs implementation so this is commented out for now
+        #elif event.type == pygame.button():
         #    stop the welcome loop, stop the music, and go to next screen
         elif event.type == VIDEORESIZE:
             screen = pygame.display.set_mode(event.dict['size'], HWSURFACE | DOUBLEBUF | RESIZABLE)
             screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
             pygame.display.flip()
-            
-#still need to do:
-#write a for loop to loop through images for the welcome loop
-#add background music
-#add begin button
-#enable the exit button
