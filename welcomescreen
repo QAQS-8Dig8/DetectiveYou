@@ -2,38 +2,63 @@ import os
 import pygame
 from pygame.locals import *
 import win32gui, win32con
+import time
 
 pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
 
+
+def textObject(text, font):
+    textSurface = font.render(text, True, [0,0,0])
+    return textSurface, textSurface.get_rect()
+
+def welcomeScreen():
 #create the gui and a title caption in the gui overhead bar 
-screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
-hwnd = win32gui.GetForegroundWindow()
-win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
-pygame.display.set_caption('Detective You')
+    screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    hwnd = win32gui.GetForegroundWindow()
+    win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
+    pygame.display.set_caption('Detective You')
 
 #This loads the background image. 
 #Later we can adjust it for animation of some kind like a gif  or looping through a few images
-background = pygame.image.load('welcomescreen_Moment24.jpg')
-pygame.display.set_icon(background)
-screen.fill((0,0,0))
-screen.blit(pygame.transform.scale(background, (500, 500)), (0, 0))
-pygame.display.flip()
+    background = pygame.image.load('welcomescreen_Moment24.jpg')
+    pygame.display.set_icon(background)
+    screen.fill((0,0,0))
+    screen.blit(pygame.transform.scale(background, (500, 500)), (0, 0))
+    pygame.display.flip()
+
+
 
 #this loads the audio track
-pygame.mixer.music.load("almamater.mp3")
-pygame.mixer.music.set_volume(1)
-pygame.mixer.music.play(-1)
+    pygame.mixer.music.load("almamater.mp3")
+    pygame.mixer.music.set_volume(1)
+    pygame.mixer.music.play(-1)
 
-playing = True
-while playing:
-    pygame.event.pump()
-    for event in pygame.event.get():
-        if event.type == pygame.quit: 
-            playing = False
-        #elif event.type == pygame.button():
-        #    stop the welcome loop, stop the music, and go to next screen
-        elif event.type == VIDEORESIZE:
-            screen = pygame.display.set_mode(event.dict['size'], HWSURFACE | DOUBLEBUF | RESIZABLE)
-            screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
-            pygame.display.flip()
+#this keeps the graphics and media on the screen
+    loop = True
+    while (loop):
+        button_color = (230,135,0)
+        pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
+        button_text = pygame.font.Font("freesansbold.ttf",45)
+        textSurf, textEllipse = textObject("Begin", button_text)
+        textEllipse.center = ((800+(225/2)), (520+(100/2)))
+        screen.blit(textSurf, textEllipse)
+        pygame.display.update()
+    
+        pygame.event.pump()
+    
+        for event in pygame.event.get():
+            if event.type == pygame.quit: 
+                pygame.mixer.music.stop()
+                exit()
+        #   elif event.type == pygame.button():
+        #       loop = False
+            #   pygame.mixer.music.stop()
+           #    go to next screen via function call
+            elif event.type == VIDEORESIZE:
+                screen = pygame.display.set_mode(event.dict['size'], HWSURFACE | DOUBLEBUF | RESIZABLE)
+                screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
+                pygame.display.flip()
+            
+
+welcomeScreen()
