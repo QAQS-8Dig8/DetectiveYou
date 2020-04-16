@@ -34,11 +34,12 @@ def welcomeScreen():
     pygame.mixer.music.set_volume(1)
     pygame.mixer.music.play(-1)
 
-#this keeps the graphics and media on the screen
+#this loop keeps the graphics and media on the screen
+    button_color = [230,135,0]
     loop = True
     while (loop):
-        button_color = (230,135,0)
-        pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
+        
+        begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
         button_text = pygame.font.Font("freesansbold.ttf",45)
         textSurf, textEllipse = textObject("Begin", button_text)
         textEllipse.center = ((800+(225/2)), (520+(100/2)))
@@ -48,14 +49,43 @@ def welcomeScreen():
         pygame.event.pump()
     
         for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
             if event.type == pygame.quit: 
                 pygame.mixer.music.stop()
                 exit()
-        #   elif event.type == pygame.button():
-        #       loop = False
-            #   pygame.mixer.music.stop()
-           #    go to next screen via function call
-            elif event.type == VIDEORESIZE:
+                
+            if 800+225 > pos[0] > 800 and 520+100 > pos[1] > 520:
+               # print("I see the mouse is on the button")
+                button_color = [55, 115, 250]
+                begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
+                button_text = pygame.font.Font("freesansbold.ttf",45)
+                textSurf, textEllipse = textObject("Begin", button_text)
+                textEllipse.center = ((800+(225/2)), (520+(100/2)))
+                screen.blit(textSurf, textEllipse)
+                pygame.display.update()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    print("you pressed the button!")
+                    button_color = [55, 115, 150]
+                    begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
+                    button_text = pygame.font.Font("freesansbold.ttf",45)
+                    textSurf, textEllipse = textObject("Begin", button_text)
+                    textEllipse.center = ((800+(225/2)), (520+(100/2)))
+                    screen.blit(textSurf, textEllipse)
+                    pygame.display.update()
+                if event.type == pygame.MOUSEBUTTONUP:
+                    print("you lifted the button!")
+                    #settings_input()
+            else:
+                button_color = [230, 135, 0]
+                begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
+                button_text = pygame.font.Font("freesansbold.ttf",45)
+                textSurf, textEllipse = textObject("Begin", button_text)
+                textEllipse.center = ((800+(225/2)), (520+(100/2)))
+                screen.blit(textSurf, textEllipse)
+                pygame.display.update()
+           
+        
+            if event.type == VIDEORESIZE:
                 screen = pygame.display.set_mode(event.dict['size'], HWSURFACE | DOUBLEBUF | RESIZABLE)
                 screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
                 pygame.display.flip()
