@@ -64,7 +64,6 @@ def welcomeScreen():
                 screen.blit(textSurf, textEllipse)
                 pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print("you pressed the button!")
                     button_color = [55, 115, 150]
                     begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
                     button_text = pygame.font.Font("freesansbold.ttf",45)
@@ -73,7 +72,6 @@ def welcomeScreen():
                     screen.blit(textSurf, textEllipse)
                     pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONUP:
-                    print("you lifted the button!")
                     #settings_input()
             else:
                 button_color = [230, 135, 0]
@@ -90,5 +88,6 @@ def welcomeScreen():
                 screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
                 pygame.display.flip()
             
+#settings_input():
 
 welcomeScreen()
