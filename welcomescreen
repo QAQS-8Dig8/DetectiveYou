@@ -1,13 +1,63 @@
 import os
 import pygame
+import tkinter as tk
 from pygame.locals import *
 import win32gui, win32con
 import time
+from sys import exit
 
 pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
 
 
+master = tk.Tk()
+
+def settingsInput():
+    
+
+    OptionListMajor = [
+    "Arts and Science",
+    "Business",
+    "Journalism",
+    "Law",
+    "Pharmacy",
+    "Education",
+    "Other/None"
+    ] 
+
+    OptionListGuide = [
+    "Santa Clause",
+    "Chuck Norris",
+    "Anthony Faucci",
+    "Marty Martin",
+    "Any Random Person"
+    ] 
+
+    variable = tk.StringVar(master)
+    variable.set(OptionListMajor[0])
+
+    variable2 = tk.StringVar(master)
+    variable2.set(OptionListGuide[0])
+
+    tk.Label(master, text="Name:").grid(row=0)
+    tk.Label(master, text="School of Major:").grid(row=1)
+    tk.Label(master, text="Choose a guide:").grid(row=2)
+    
+
+    e1 = tk.Entry(master)
+    e2 = tk.OptionMenu(master, variable, *OptionListMajor)
+    e3 = tk.OptionMenu(master, variable2, *OptionListGuide)
+
+    e1.grid(row=0, column=1)
+    e2.grid(row=1, column=1)
+    e3.grid(row=2, column=1)
+    #name = e1.get()
+    #major = e2.get()
+    #guide = e3.get()
+
+    button = tk.Button(master, text="done", command=lambda:[clue1(e1, variable, variable2), master.destroy()]).grid(row=3)
+    
+    master.mainloop()
 
 def textObject(text, font, text_color):
     textSurface = font.render(text, True, text_color)
@@ -15,11 +65,12 @@ def textObject(text, font, text_color):
 
 def welcomeScreen():
 #create the gui and a title caption in the gui overhead bar 
-
+   
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
     hwnd = win32gui.GetForegroundWindow()
     win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
     pygame.display.set_caption('Detective You')
+    clock = pygame.time.Clock()
 #This loads the background image. 
 #Later we can adjust it for animation of some kind like a gif  or looping through a few images
     background = pygame.image.load('welcomescreen_Moment24.jpg')
@@ -76,11 +127,7 @@ def welcomeScreen():
                     button_color = [230, 135, 0]
                     begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
                     button_text = pygame.font.Font("freesansbold.ttf",45)
-                    textSurf, textEllipse = textObject("Next", button_text, [0,0,0])
-                    textEllipse.center = ((800+(225/2)), (520+(100/2)))
-                    screen.blit(textSurf, textEllipse)
-                    pygame.display.update()
-                    settings_input(screen, begin_button)
+                    settingsInput()
             else:
                 button_color = [230, 135, 0]
                 begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
@@ -96,36 +143,13 @@ def welcomeScreen():
                 screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
                 pygame.display.flip()
             
-def settings_input(screen, next_button):
+#we will need this code in the function definition for the first clue
+def clue1(e1, e2, e3):
+    name = e1.get()
+    major = e2.get()
+    guide = e3.get()
+    pygame.mixer.music.stop()
+    print(name, major, guide) #used this for testing
     
-    box = pygame.draw.rect(screen, [255,255,255], [500, 385, 555, 100])
-    box_text = pygame.font.Font("freesansbold.ttf",75)
-    textSurf, textInput = textObject("Name:", box_text, [255,255,255])
-    textInput.center = (610, 350)
-    screen.blit(textSurf, textInput)
-    pygame.display.update()
     
-    loop = True
-    while loop:
-        for event in pygame.event.get():
-            pos = pygame.mouse.get_pos()
-            if event.type == pygame.quit: 
-                pygame.mixer.music.stop()
-                quite()
-                
-            if 500+555 > pos[0] > 500 and 385+100 > pos[1] > 385:
-
-                if event.type == pygame.MOUSEBUTTONUP:
-                    response = input('')
-                    #display user input on box, not working quite right
-                    user_text = pygame.font.Font("freesansbold.ttf",40)
-                    textSurf, textUser = textObject(response, user_text, [0,0,0])
-                    textInput.center = ((500+(555/2)), (420+(100/2)))
-                    screen.blit(textSurf, textInput)
-                    pygame.display.update()
-                    print("you clicked the text box")
-                    #settings_input(screen, box)
-                    
-
-
 welcomeScreen()
