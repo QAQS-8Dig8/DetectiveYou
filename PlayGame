@@ -9,7 +9,7 @@ from sys import exit
 pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
 
-
+master = tk.Tk()
 
 
 def wrong_answer():
@@ -28,7 +28,7 @@ def game_over():
 
 def settingsInput():
     
-    master = tk.Tk()
+    
     OptionListMajor = [
     "Arts and Science",
     "Business",
@@ -163,7 +163,7 @@ def clueOne(e1, e2, e3):
     guide = e3.get()
     pygame.mixer.music.stop()
     wrong_answers = 0
-
+    master.destroy()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
     
 #this stuff needs to be inside the function
