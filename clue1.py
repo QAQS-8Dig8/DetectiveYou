@@ -24,7 +24,7 @@ def game_over():
     tk.Label(you_lost, text="Game Over!").grid(row=1)
     you_lost.mainloop()
     pygame.display.quit()
-    welcomescreen()
+    welcomeScreen()
 
 def clueOne(e1, e2, e3): 
     pygame.display.quit()
