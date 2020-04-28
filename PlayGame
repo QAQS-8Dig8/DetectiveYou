@@ -10,6 +10,9 @@ pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
 
 master = tk.Tk()
+
+        
+
 def wrong_answer():
     message = tk.Tk()
     tk.Label(message, text="Wrong answer!").grid(row=0)
@@ -38,11 +41,9 @@ def settingsInput():
     ] 
 
     OptionListGuide = [
-    "Santa Clause",
-    "Chuck Norris",
-    "Anthony Faucci",
-    "Marty Martin",
-    "Any Random Person"
+    "Santa",
+    "Harry Potter",
+    "Gollum"
     ] 
 
     variable = tk.StringVar(master)
@@ -170,11 +171,18 @@ def clueOne(e1, e2, e3):
     pygame.display.set_caption('Olmsted Coffee Shop')
     
 #backgroundimage
-    background = pygame.image.load('olmstedcartoon.JPG')
+    if guide == "Santa":
+        background = pygame.image.load('olmstedcartoonsanta.JPG')
+    elif guide == "Harry Potter":
+        background = pygame.image.load('olmstedcartoonhp.JPG')
+    elif guide == "Gollum":
+        background = pygame.image.load('olmstedcartoongollum.JPG')
     pygame.display.set_icon(background)
     screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(background, (500,500)), (0,0))
     pygame.display.flip()
+    
+
     
 
     
@@ -184,6 +192,8 @@ def clueOne(e1, e2, e3):
     loop = True 
 
     while(loop): 
+
+        
         riddle_box = pygame.draw.rect(screen, [225,225,225], [0, 0, 1400, 100])
         riddle_text = pygame.font.Font("freesansbold.ttf",45)
         textSurf, textRect = textObject("Dark roasted coffee beans have…", riddle_text, [0,0,0])
@@ -349,7 +359,12 @@ def clueTwo(name, major, guide, wrong_answers):
     pygame.display.set_caption('Library')
     
 #backgroundimage
-    background = pygame.image.load('Library.JPG')
+    if guide == "Santa":
+        background = pygame.image.load('Librarysanta.JPG')
+    elif guide == "Harry Potter":
+        background = pygame.image.load('Libraryhp.PNG')
+    elif guide == "Gollum":
+        background = pygame.image.load('Librarygollum.JPG')
     pygame.display.set_icon(background)
     screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(background, (500,500)), (0,0))
@@ -530,7 +545,12 @@ def clueThree(name, major, guide, wrong_answers):
     pygame.display.set_caption('Painted Street')
     
 #backgroundimage
-    background = pygame.image.load('paintedStreet.JPG')
+    if guide == "Santa":
+        background = pygame.image.load('paintedStreetsanta.JPG')
+    elif guide == "Harry Potter":
+        background = pygame.image.load('paintedStreethp.JPG')
+    elif guide == "Gollum":
+        background = pygame.image.load('paintedStreetgollum.JPG')
     pygame.display.set_icon(background)
     screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(background, (500,500)), (0,0))
@@ -712,7 +732,12 @@ def clueFour(name, major, guide, wrong_answers):
     pygame.display.set_caption("Chapel")
     
 #backgroundimage
-    background = pygame.image.load('chapel.JPG')
+    if guide == "Santa":
+        background = pygame.image.load('chapelsanta.JPG')
+    elif guide == "Harry Potter":
+        background = pygame.image.load('chapelhp.JPG')
+    elif guide == "Gollum":
+        background = pygame.image.load('chapelgollum.JPG')
     pygame.display.set_icon(background)
     screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(background, (500,500)), (0,0))
@@ -830,7 +855,7 @@ def clueFour(name, major, guide, wrong_answers):
                     textEllipse.center = ((1000+(250/2)), (600+(100/2)))
                     screen.blit(textSurf, textEllipse)
                     pygame.display.update()
-                    #clueFive(name, major, guide, wrong_answers)
+                    clueFive(name, major, guide, wrong_answers)
             else:
                 option2_button_color = [215, 132, 121]
                 option2_button = pygame.draw.ellipse(screen, option2_button_color, [1000, 600, 250, 100])
@@ -883,7 +908,7 @@ def clueFour(name, major, guide, wrong_answers):
                 screen = pygame.display.set_mode(event.dict['size'], HWSURFACE | DOUBLEBUF | RESIZABLE)
                 screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
                 pygame.display.flip()
-    
+        
 
 def clueFive(name, major, guide, wrong_answers):
     pygame.display.quit()
@@ -895,7 +920,12 @@ def clueFive(name, major, guide, wrong_answers):
     pygame.display.set_caption("Sheslow Auditorium")
     
 #backgroundimage
-    background = pygame.image.load('sheslow.JPG')
+    if guide == "Santa":
+        background = pygame.image.load('sheslowsanta.JPG')
+    elif guide == "Harry Potter":
+        background = pygame.image.load('sheslowhp.JPG')
+    elif guide == "Gollum":
+        background = pygame.image.load('sheslowgollum.JPG')
     pygame.display.set_icon(background)
     screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(background, (500,500)), (0,0))
@@ -1052,7 +1082,7 @@ def clueFive(name, major, guide, wrong_answers):
                     textEllipse.center = ((400+(250/2)), (600+(100/2)))
                     screen.blit(textSurf, textEllipse)
                     pygame.display.update()
-                    #clueSix(name, major, guide, wrong_answers)
+                    clueSix(name, major, guide, wrong_answers)
                     
             else:
                 option3_button_color = [215, 132, 121]
@@ -1068,6 +1098,7 @@ def clueFive(name, major, guide, wrong_answers):
                 screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
                 pygame.display.flip()
         
+
 def clueSix(name, major, guide, wrong_answers):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
@@ -1078,7 +1109,12 @@ def clueSix(name, major, guide, wrong_answers):
     pygame.display.set_caption("Drake Footballl Stadium")
     
 #backgroundimage
-    background = pygame.image.load('stadium.JPG')
+    if guide == "Santa":
+        background = pygame.image.load('stadiumsanta.JPG')
+    elif guide == "Harry Potter":
+        background = pygame.image.load('stadiumhp.JPG')
+    elif guide == "Gollum":
+        background = pygame.image.load('stadiumgollum.JPG')
     pygame.display.set_icon(background)
     screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(background, (500,500)), (0,0))
