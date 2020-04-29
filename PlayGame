@@ -201,6 +201,13 @@ def clueOne(e1, e2, e3):
         screen.blit(textSurf, textRect)
         pygame.display.update()
         
+        help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
+        help_text = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = textObject("Hi "+str(name)+"! Click here!", help_text, [0,0,0])
+        textRect.center = ((10+(300/2)), (350+(30/2)))
+        screen.blit(textSurf, textRect)
+        pygame.display.update()
+        
         option1_button = pygame.draw.ellipse(screen, option1_button_color, [700, 600, 250, 100])
         option1_button_text = pygame.font.Font("freesansbold.ttf",35)
         textSurf, textEllipse = textObject("Richer flavor", option1_button_text, [0,0,0])
@@ -382,6 +389,13 @@ def clueTwo(name, major, guide, wrong_answers):
         riddle_text = pygame.font.Font("freesansbold.ttf",45)
         textSurf, textRect = textObject("Who was Bilbo's adopted heir in the Lord of The Rings?", riddle_text, [0,0,0])
         textRect.center = ((0+(1400/2)), (0+(100/2)))
+        screen.blit(textSurf, textRect)
+        pygame.display.update()
+        
+        help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
+        help_text = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = textObject("Hi "+str(name)+"! Click here!", help_text, [0,0,0])
+        textRect.center = ((10+(300/2)), (350+(30/2)))
         screen.blit(textSurf, textRect)
         pygame.display.update()
         
@@ -571,6 +585,13 @@ def clueThree(name, major, guide, wrong_answers):
         screen.blit(textSurf, textRect)
         pygame.display.update()
         
+        help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
+        help_text = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = textObject("Hi "+str(name)+"! Click here!", help_text, [0,0,0])
+        textRect.center = ((10+(300/2)), (350+(30/2)))
+        screen.blit(textSurf, textRect)
+        pygame.display.update()
+        
         option1_button = pygame.draw.ellipse(screen, option1_button_color, [700, 600, 250, 100])
         option1_button_text = pygame.font.Font("freesansbold.ttf",35)
         textSurf, textEllipse = textObject("570", option1_button_text, [0,0,0])
@@ -755,6 +776,13 @@ def clueFour(name, major, guide, wrong_answers):
         riddle_text = pygame.font.Font("freesansbold.ttf",35)
         textSurf, textRect = textObject("In Greek mythology, what is the offspring of a god and mortal called?", riddle_text, [0,0,0])
         textRect.center = ((0+(1400/2)), (0+(100/2)))
+        screen.blit(textSurf, textRect)
+        pygame.display.update()
+        
+        help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
+        help_text = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = textObject("Hi "+str(name)+"! Click here!", help_text, [0,0,0])
+        textRect.center = ((10+(300/2)), (350+(30/2)))
         screen.blit(textSurf, textRect)
         pygame.display.update()
         
@@ -946,6 +974,13 @@ def clueFive(name, major, guide, wrong_answers):
         screen.blit(textSurf, textRect)
         pygame.display.update()
         
+        help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
+        help_text = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = textObject("Hi "+str(name)+"! Click here!", help_text, [0,0,0])
+        textRect.center = ((10+(300/2)), (350+(30/2)))
+        screen.blit(textSurf, textRect)
+        pygame.display.update()
+        
         option1_button = pygame.draw.ellipse(screen, option1_button_color, [700, 600, 250, 100])
         option1_button_text = pygame.font.Font("freesansbold.ttf",35)
         textSurf, textEllipse = textObject("Love", option1_button_text, [0,0,0])
@@ -1132,6 +1167,13 @@ def clueSix(name, major, guide, wrong_answers):
         riddle_text = pygame.font.Font("freesansbold.ttf",30)
         textSurf, textRect = textObject("Which Drake Relays winner became the world's fastest human and won the super bowl?", riddle_text, [0,0,0])
         textRect.center = ((0+(1400/2)), (0+(100/2)))
+        screen.blit(textSurf, textRect)
+        pygame.display.update()
+        
+        help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
+        help_text = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = textObject("Hi "+str(name)+"! Click here!", help_text, [0,0,0])
+        textRect.center = ((10+(300/2)), (350+(30/2)))
         screen.blit(textSurf, textRect)
         pygame.display.update()
         
