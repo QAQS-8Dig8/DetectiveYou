@@ -8,7 +8,7 @@ from sys import exit
 
 pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
-   
+    
 
 def wrong_answer():
     message = tk.Tk()
@@ -22,9 +22,14 @@ def game_over():
     you_lost.mainloop()
     pygame.display.quit()
     welcomeScreen()
+    
+def tour_text(message):
+    tour = tk.Tk()
+    tk.Label(tour, text=message).grid(row=1)
+    tour.mainloop()
 
 def settingsInput():
-    master = tk.Tk() 
+    master = tk.Tk()
     
     OptionListMajor = [
     "Arts and Science",
@@ -50,7 +55,7 @@ def settingsInput():
 
     tk.Label(master, text="Name:").grid(row=0)
     tk.Label(master, text="School of Major:").grid(row=1)
-    tk.Label(master, text="Choose a guide:").grid(row=2)
+    tk.Label(master, text="Choose a tour guide:").grid(row=2)
     
 
     e1 = tk.Entry(master)
@@ -202,6 +207,7 @@ def clueOne(e1, e2, e3, master):
     guide = e3.get()
     pygame.mixer.music.stop()
     wrong_answers = 0
+    olmsted = "Oh no! Drake's live mascott, Griff has gone missing and it's up to you to find him!\nTour the campus by answering trivia questions until you find Griff.\n \nYour first stop is the Olmsted Coffe Shop.\nStudents gather here to study, socialize, and of course, caffeinate!\n"
     master.destroy()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
     if guide == "Santa":
@@ -282,6 +288,10 @@ def clueOne(e1, e2, e3, master):
             else:
                 option3_button_color = [215, 132, 121]
                 option3(screen, "Both", option3_button_color)
+                
+            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tour_text(olmsted)
         
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
@@ -289,6 +299,7 @@ def clueOne(e1, e2, e3, master):
 def clueTwo(name, major, guide, wrong_answers):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    library = "This is Cowels Library. \nThis is a great place go to study and find all kinds of reading and study materials. \nIt also has a cafe which is open to students 24 hours."
     if guide == "Santa":
         background = pygame.image.load('Librarysanta.JPG')
     elif guide == "Harry Potter":
@@ -368,6 +379,10 @@ def clueTwo(name, major, guide, wrong_answers):
             else:
                 option3_button_color = [215, 132, 121]
                 option3(screen, "Otho", option3_button_color)
+            
+            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tour_text(library)
         
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
@@ -375,6 +390,7 @@ def clueTwo(name, major, guide, wrong_answers):
 def clueThree(name, major, guide, wrong_answers):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    street = "We have now come to the famous painted street. \nPainted street runs down the middle of campus and every year \nstudents repaint the street with new works of art.\nThe anual street painting consists of a very colorful frenzy\nin which students cover both themselves and each other with paint."
     if guide == "Santa":
         background = pygame.image.load('paintedStreetsanta.JPG')
     elif guide == "Harry Potter":
@@ -453,6 +469,10 @@ def clueThree(name, major, guide, wrong_answers):
             else:
                 option3_button_color = [215, 132, 121]
                 option3(screen, "650", option3_button_color)
+                
+            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tour_text(street)
         
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
@@ -461,6 +481,7 @@ def clueThree(name, major, guide, wrong_answers):
 def clueFour(name, major, guide, wrong_answers):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    chapel = "Did you know that Drake University used to be a Bible school back in 1881?\nThis is the chapel from way back then. It is a very small, \nvery round building that is known to give off some creepy vibes! \nThe chapel is no longer used today but is popular for being the perfect spot \nto shoot creepy photos and videos."
     if guide == "Santa":
         background = pygame.image.load('chapelsanta.JPG')
     elif guide == "Harry Potter":
@@ -539,6 +560,10 @@ def clueFour(name, major, guide, wrong_answers):
             else:
                 option3_button_color = [215, 132, 121]
                 option3(screen, "An oracle", option3_button_color)
+                
+            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tour_text(chapel)
         
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
@@ -546,6 +571,7 @@ def clueFour(name, major, guide, wrong_answers):
 def clueFive(name, major, guide, wrong_answers):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    sheslow = "This is the Sheslow Auditorium found in Old Main. \n The auditorium holds 775 guests and is used for all kinds of events from \nconcerts, recitals, guest speakers, and campus programs."
     if guide == "Santa":
         background = pygame.image.load('sheslowsanta.JPG')
     elif guide == "Harry Potter":
@@ -625,6 +651,10 @@ def clueFive(name, major, guide, wrong_answers):
             else:
                 option3_button_color = [215, 132, 121]
                 option3(screen, "Coffee", option3_button_color)
+                
+            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tour_text(sheslow)
         
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
@@ -632,6 +662,7 @@ def clueFive(name, major, guide, wrong_answers):
 def clueSix(name, major, guide, wrong_answers):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    relays = "The Drake Stadium is the home of the Drake Relays, a world class track and field meet.\nRelays are one of the biggest events in Des Moines each year\nand have attracted athletes from all over. Take a look at your trivia options.\nEach one competed in the Drake Relays but only one fullfills the trivia question."
     if guide == "Santa":
         background = pygame.image.load('stadiumsanta.JPG')
     elif guide == "Harry Potter":
@@ -711,6 +742,10 @@ def clueSix(name, major, guide, wrong_answers):
             else:
                 option3_button_color = [215, 132, 121]
                 option3(screen, "Rod Woodson", option3_button_color)
+                
+            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    tour_text(relays)
         
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
