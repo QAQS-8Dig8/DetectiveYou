@@ -8,7 +8,7 @@ from sys import exit
 
 pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
-master = tk.Tk()    
+   
 
 def wrong_answer():
     message = tk.Tk()
@@ -24,7 +24,7 @@ def game_over():
     welcomeScreen()
 
 def settingsInput():
-    
+    master = tk.Tk() 
     
     OptionListMajor = [
     "Arts and Science",
@@ -61,7 +61,7 @@ def settingsInput():
     e2.grid(row=1, column=1)
     e3.grid(row=2, column=1)
 
-    button = tk.Button(master, text="done", command=lambda:[clueOne(e1, variable, variable2), master.destroy()]).grid(row=3)
+    button = tk.Button(master, text="done", command=lambda:[clueOne(e1, variable, variable2, master), master.destroy()]).grid(row=3)
     
     master.mainloop()
 
@@ -194,7 +194,7 @@ def welcomeScreen():
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
 
-def clueOne(e1, e2, e3): 
+def clueOne(e1, e2, e3, master): 
     pygame.display.quit()
 
     name = e1.get()
