@@ -99,12 +99,32 @@ def riddle_display(screen, riddle):
     screen.blit(textSurf, textRect)
     pygame.display.update()
     
+def challenge_display(screen, text1, text2):
+    text_box = pygame.draw.rect(screen, [225,225,225], [0, 0, 1400, 100])
+    line1_text = pygame.font.Font("freesansbold.ttf",30)
+    textSurf, textRect = textObject(text1, line1_text, [0,0,0])
+    textRect.center = ((0+(1400/2)), (0+(50/2)))
+    screen.blit(textSurf, textRect)
+    line2_text = pygame.font.Font("freesansbold.ttf",30)
+    textSurf, textRect = textObject(text2, line2_text, [0,0,0])
+    textRect.center = ((0+(1400/2)), (20+(100/2)))
+    screen.blit(textSurf, textRect)
+    pygame.display.update()
+    
 def help_button(screen, name):
     help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
     help_text = pygame.font.Font("freesansbold.ttf",15)
     textSurf, textRect = textObject("Hi "+str(name)+"! Click here!", help_text, [0,0,0])
     textRect.center = ((10+(300/2)), (350+(30/2)))
     screen.blit(textSurf, textRect)
+    pygame.display.update()
+    
+def challenge_button(screen, text, challenge_button_color):
+    challenge_button = pygame.draw.ellipse(screen, challenge_button_color, [100, 600, 350, 100])
+    challenge_button_text = pygame.font.Font("freesansbold.ttf",35)
+    textSurf, textEllipse = textObject(text, challenge_button_text, [0,0,0])
+    textEllipse.center = ((100+(350/2)), (600+(100/2)))
+    screen.blit(textSurf, textEllipse)
     pygame.display.update()
     
                 
@@ -303,7 +323,7 @@ def clueTwo(name, major, guide, wrong_answers):
     if guide == "Santa":
         background = pygame.image.load('Librarysanta.JPG')
     elif guide == "Harry Potter":
-        background = pygame.image.load('Libraryhp.JPG')
+        background = pygame.image.load('Libraryhp.PNG')
     elif guide == "Gollum":
         background = pygame.image.load('Librarygollum.JPG')
     create_screen(screen, 'Library', background)
@@ -718,7 +738,7 @@ def clueSix(name, major, guide, wrong_answers):
                 if event.type == pygame.MOUSEBUTTONUP:
                     option2_button_color = [215, 132, 121]
                     option2(screen, "Bob Hayes", option2_button_color)
-                    #maze(name, major, guide)
+                    challenge(name, major, guide)
                     
             else:
                 option2_button_color = [215, 132, 121]
@@ -747,6 +767,41 @@ def clueSix(name, major, guide, wrong_answers):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     tour_text(relays)
         
+            if event.type == VIDEORESIZE:
+                make_fullscreen(background, event)
+                
+def challenge(name, major, guide):
+    pygame.display.quit()
+    screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+    background = pygame.image.load('hidden.JPG')
+    create_screen(screen, "Challenge", background)
+    
+    loop = True 
+    
+    while(loop): 
+        challenge_display(screen, "Someone is hoarding all the Griff snuggles for themself!", "The culprit has challenged you to a game of connect four to earn a cuddle session.")
+        pygame.event.pump()
+        
+        
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.quit: 
+                pygame.display.quite()
+                
+            if 100+350 > pos[0] > 100 and 600+100 > pos[1] > 600:
+                challenge_button_color = [55, 115, 250]
+                challenge_button(screen, "Accept Challenge", challenge_button_color)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    challenge_button_color = [55, 115, 150]
+                    challenge_button(screen, "Accept Challenge", challenge_button_color)
+                if event.type == pygame.MOUSEBUTTONUP:
+                    challenge_button_color = [215, 132, 121]
+                    challenge_button(screen, "Accept Challenge", challenge_button_color)
+ 
+            else:
+                challenge_button_color = [215, 132, 121]
+                challenge_button(screen, "Accept Challenge", challenge_button_color)
+                
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
         
