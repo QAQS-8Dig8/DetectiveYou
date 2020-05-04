@@ -1,3 +1,6 @@
+import numpy as np
+import random
+import math
 import os
 import pygame
 import tkinter as tk
@@ -8,7 +11,6 @@ from sys import exit
 
 pygame.mixer.pre_init(44100,16,2,4096)
 pygame.init()
-    
 
 def wrong_answer():
     message = tk.Tk()
@@ -22,7 +24,7 @@ def game_over():
     you_lost.mainloop()
     pygame.display.quit()
     welcomeScreen()
-    
+
 def tour_text(message):
     tour = tk.Tk()
     tk.Label(tour, text=message).grid(row=1)
@@ -30,7 +32,6 @@ def tour_text(message):
 
 def settingsInput():
     master = tk.Tk()
-    
     OptionListMajor = [
     "Arts and Science",
     "Business",
@@ -40,52 +41,40 @@ def settingsInput():
     "Education",
     "Other/None"
     ] 
-
     OptionListGuide = [
     "Santa",
     "Harry Potter",
     "Gollum"
     ] 
-
     variable = tk.StringVar(master)
     variable.set(OptionListMajor[0])
-
     variable2 = tk.StringVar(master)
     variable2.set(OptionListGuide[0])
-
     tk.Label(master, text="Name:").grid(row=0)
     tk.Label(master, text="School of Major:").grid(row=1)
     tk.Label(master, text="Choose a tour guide:").grid(row=2)
-    
-
     e1 = tk.Entry(master)
     e2 = tk.OptionMenu(master, variable, *OptionListMajor)
     e3 = tk.OptionMenu(master, variable2, *OptionListGuide)
-
     e1.grid(row=0, column=1)
     e2.grid(row=1, column=1)
     e3.grid(row=2, column=1)
-
     button = tk.Button(master, text="done", command=lambda:[clueOne(e1, variable, variable2, master), master.destroy()]).grid(row=3)
-    
     master.mainloop()
-
+    
 def textObject(text, font, text_color):
     textSurface = font.render(text, True, text_color)
     return textSurface, textSurface.get_rect()
 
-
 def create_screen(screen, title, background):
-    
     hwnd = win32gui.GetForegroundWindow() 
     win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
     pygame.display.set_caption(title)
-    
     pygame.display.set_icon(background)
     screen.fill((0,0,0))
     screen.blit(pygame.transform.scale(background, (500,500)), (0,0))
     pygame.display.flip()
-    
+
 def make_fullscreen(background, event):
     screen = pygame.display.set_mode(event.dict['size'], HWSURFACE | DOUBLEBUF | RESIZABLE)
     screen.blit(pygame.transform.scale(background, event.dict['size']), (0, 0))
@@ -98,7 +87,7 @@ def riddle_display(screen, riddle):
     textRect.center = ((0+(1400/2)), (0+(100/2)))
     screen.blit(textSurf, textRect)
     pygame.display.update()
-    
+
 def challenge_display(screen, text1, text2):
     text_box = pygame.draw.rect(screen, [225,225,225], [0, 0, 1400, 100])
     line1_text = pygame.font.Font("freesansbold.ttf",30)
@@ -110,7 +99,7 @@ def challenge_display(screen, text1, text2):
     textRect.center = ((0+(1400/2)), (20+(100/2)))
     screen.blit(textSurf, textRect)
     pygame.display.update()
-    
+
 def help_button(screen, name):
     help_box = pygame.draw.rect(screen, [225,225,225], [10, 350, 300, 30])
     help_text = pygame.font.Font("freesansbold.ttf",15)
@@ -118,7 +107,7 @@ def help_button(screen, name):
     textRect.center = ((10+(300/2)), (350+(30/2)))
     screen.blit(textSurf, textRect)
     pygame.display.update()
-    
+
 def challenge_button(screen, text, challenge_button_color):
     challenge_button = pygame.draw.ellipse(screen, challenge_button_color, [100, 600, 350, 100])
     challenge_button_text = pygame.font.Font("freesansbold.ttf",35)
@@ -126,8 +115,7 @@ def challenge_button(screen, text, challenge_button_color):
     textEllipse.center = ((100+(350/2)), (600+(100/2)))
     screen.blit(textSurf, textEllipse)
     pygame.display.update()
-    
-                
+
 def option1(screen, text, option1_button_color):
     option1_button = pygame.draw.ellipse(screen, option1_button_color, [700, 600, 250, 100])
     option1_button_text = pygame.font.Font("freesansbold.ttf",35)
@@ -135,7 +123,7 @@ def option1(screen, text, option1_button_color):
     textEllipse.center = ((700+(250/2)), (600+(100/2)))
     screen.blit(textSurf, textEllipse)
     pygame.display.update()
-    
+
 def option2(screen, text, option2_button_color):
     option2_button = pygame.draw.ellipse(screen, option2_button_color, [1000, 600, 250, 100])
     option2_button_text = pygame.font.Font("freesansbold.ttf",35)
@@ -143,7 +131,7 @@ def option2(screen, text, option2_button_color):
     textEllipse.center = ((1000+(250/2)), (600+(100/2)))
     screen.blit(textSurf, textEllipse)
     pygame.display.update()
-    
+
 def option3(screen, text, option3_button_color):
     option3_button = pygame.draw.ellipse(screen, option3_button_color, [400, 600, 250, 100])
     option3_button_text = pygame.font.Font("freesansbold.ttf",35)
@@ -152,39 +140,182 @@ def option3(screen, text, option3_button_color):
     screen.blit(textSurf, textEllipse)
     pygame.display.update()
 
+def create_board(ROW_COUNT,COLUMN_COUNT):
+    board = np.zeros((ROW_COUNT,COLUMN_COUNT))
+    return board
+
+def drop_piece(board, row, col, piece):
+    board[row][col] = piece
+
+def is_valid_location(board, col, ROW_COUNT):
+    return board[ROW_COUNT-1][col] == 0
+
+def get_next_open_row(board, col, ROW_COUNT):
+    for r in range(ROW_COUNT):
+        if board[r][col] == 0:
+            return r
+
+def winning_move(board, piece, COLUMN_COUNT, ROW_COUNT):
+    for c in range(COLUMN_COUNT-3):
+        for r in range(ROW_COUNT):
+            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+                return True
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT-3):
+            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+                return True
+    for c in range(COLUMN_COUNT-3):
+            for r in range(ROW_COUNT-3):
+                if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+                    return True
+    for c in range(COLUMN_COUNT-3):
+            for r in range(3, ROW_COUNT):
+                if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+                    return True
+
+def evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY):
+    score = 0
+    opp_piece = PLAYER_PIECE
+    if piece == PLAYER_PIECE:
+        opp_piece = AI_PIECE
+    if window.count(piece) == 4:
+        score += 100
+    elif window.count(piece) == 3 and window.count(EMPTY) == 1:
+        score += 5
+    elif window.count(piece) == 2 and window.count(EMPTY) == 2:
+        score += 2
+    if window.count(opp_piece) == 3 and window.count(EMPTY) == 1:
+            score -= 4
+    return score
+
+def score_position(board,piece,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY):
+    score = 0
+    center_array = [int(i) for i in list(board[:, COLUMN_COUNT//2])]
+    center_count = center_array.count(piece)
+    score += center_count * 3
+    for r in range(ROW_COUNT):
+        row_array = [int(i) for i in list(board[r,:])]
+        for c in range(COLUMN_COUNT-3):
+            window = row_array[c:c+WINDOW_LENGTH]
+            score += evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY)
+    for c in range(COLUMN_COUNT):
+        col_array = [int(i) for i in list(board[:,c])]
+        for r in range(ROW_COUNT-3):
+            window = col_array[r:r+WINDOW_LENGTH]
+            score += evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY)
+    for r in range(ROW_COUNT-3):
+        for c in range(COLUMN_COUNT-3):
+            window = [board[r+i][c+i] for i in range(WINDOW_LENGTH)]
+            score += evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY)
+    for r in range(ROW_COUNT-3):
+        for c in range(COLUMN_COUNT-3):
+            window = [board[r+3-i][c+i] for i in range(WINDOW_LENGTH)]
+            score += evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY)
+    return score
+
+def is_terminal_node(board):
+    ROW_COUNT = 6
+    COLUMN_COUNT = 7
+    PLAYER = 0
+    AI = 1
+    PLAYER_PIECE = 1
+    AI_PIECE = 2
+    return winning_move(board, PLAYER_PIECE, COLUMN_COUNT, ROW_COUNT) or winning_move(board, AI_PIECE, COLUMN_COUNT, ROW_COUNT) or len(get_valid_locations(board,COLUMN_COUNT,ROW_COUNT)) == 0
+
+def minimax(board, depth, alpha, beta, maximizingPlayer,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY):
+    valid_locations = get_valid_locations(board,COLUMN_COUNT,ROW_COUNT)
+    is_terminal = is_terminal_node(board)
+    if depth == 0 or is_terminal:
+        if is_terminal:
+            if winning_move(board, AI_PIECE, COLUMN_COUNT, ROW_COUNT):
+                return (None, 100000000000000)
+            elif winning_move(board, PLAYER_PIECE, COLUMN_COUNT, ROW_COUNT):
+                return (None, -10000000000000)
+            else: # Game is over, no more valid moves
+                return (None, 0)
+        else: # Depth is zero
+            return (None, score_position(board, AI_PIECE,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY))
+    if maximizingPlayer:
+        value = -math.inf
+        column = random.choice(valid_locations)
+        for col in valid_locations:
+            row = get_next_open_row(board, col, ROW_COUNT)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, AI_PIECE)
+            new_score = minimax(b_copy, depth-1, alpha, beta, False,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY)[1]
+            if new_score > value:
+                value = new_score
+                column = col
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+        return column, value
+    else: 
+        value = math.inf
+        column = random.choice(valid_locations)
+        for col in valid_locations:
+            row = get_next_open_row(board, col, ROW_COUNT)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, PLAYER_PIECE)
+            new_score = minimax(b_copy, depth-1, alpha, beta, True,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY)[1]
+            if new_score < value:
+                value = new_score
+                column = col
+            beta = min(beta, value)
+            if alpha >= beta:
+                break
+        return column, value
+
+def get_valid_locations(board,COLUMN_COUNT,ROW_COUNT):
+    valid_locations = []
+    for col in range(COLUMN_COUNT):
+        if is_valid_location(board, col, ROW_COUNT):
+            valid_locations.append(col)
+    return valid_locations
+
+def draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED):
+    SQUARESIZE = 100
+    width = COLUMN_COUNT * SQUARESIZE
+    height = (ROW_COUNT+1) * SQUARESIZE
+    size = (width, height)
+    RADIUS = int(SQUARESIZE/2 - 5)
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            pygame.draw.rect(screen, BLUE, (c*SQUARESIZE, r*SQUARESIZE+SQUARESIZE, SQUARESIZE, SQUARESIZE))
+            pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE+SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)), RADIUS)
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            if board[r][c] == PLAYER_PIECE:
+                pygame.draw.circle(screen, RED, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
+            elif board[r][c] == AI_PIECE: 
+                pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
+    pygame.display.update()
 
 def welcomeScreen():
 #create the gui and a title caption in the gui overhead bar 
-   
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
     background = pygame.image.load('welcomescreen_Moment24.jpg')
     create_screen(screen, 'Detective You', background)
-
 #this loads the audio track
     pygame.mixer.music.load("almamater.mp3")
     pygame.mixer.music.set_volume(1)
     pygame.mixer.music.play(-1)
-
 #this loop keeps the graphics and media on the screen
     button_color = [230,135,0]
     loop = True
     while (loop):
-        
         begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
         button_text = pygame.font.Font("freesansbold.ttf",45)
         textSurf, textEllipse = textObject("Begin", button_text, [0,0,0])
         textEllipse.center = ((800+(225/2)), (520+(100/2)))
         screen.blit(textSurf, textEllipse)
         pygame.display.update()
-    
         pygame.event.pump()
-    
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
             if event.type == pygame.quit: 
                 pygame.mixer.music.stop()
                 pygame.display.quit()
-                
             if 800+225 > pos[0] > 800 and 520+100 > pos[1] > 520:
                 button_color = [55, 115, 250]
                 begin_button = pygame.draw.ellipse(screen, button_color, [800, 520, 225, 100])
@@ -214,14 +345,11 @@ def welcomeScreen():
                 textEllipse.center = ((800+(225/2)), (520+(100/2)))
                 screen.blit(textSurf, textEllipse)
                 pygame.display.update()
-           
-        
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
-
+                
 def clueOne(e1, e2, e3, master): 
     pygame.display.quit()
-
     name = e1.get()
     major = e2.get()
     guide = e3.get()
@@ -237,27 +365,21 @@ def clueOne(e1, e2, e3, master):
     elif guide == "Gollum":
         background = pygame.image.load('olmstedcartoongollum.JPG')
     create_screen(screen, 'Olmsted Coffee Shop', background)
-
     option1_button_color = [215,132,121]
     option2_button_color = [215,132,121]
     option3_button_color = [215,132,121]
     loop = True 
-
     while(loop): 
         riddle_display(screen, "Dark roasted coffee beans have…")
         help_button(screen, name)
-        
         option1(screen, "Richer flavor", option1_button_color)
         option2(screen, "Less caffeine", option2_button_color)
         option3(screen, "Both", option3_button_color)
-
         pygame.event.pump()
-    
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
             if event.type == pygame.quit: 
                 pygame.display.quite()
-                
             if 700+250 > pos[0] > 700 and 600+100 > pos[1] > 600:
                 option1_button_color = [55, 115, 250]
                 option1(screen, "Richer flavor", option1_button_color)
@@ -275,7 +397,6 @@ def clueOne(e1, e2, e3, master):
             else:
                 option1_button_color = [215,132,121]
                 option1(screen, "Richer flavor", option1_button_color)
-                
             if 1000+250 > pos[0] > 1000 and 600+100 > pos[1] > 600:
                 option2_button_color = [55, 115, 250]
                 option2(screen, "Less caffeine", option2_button_color)
@@ -293,7 +414,6 @@ def clueOne(e1, e2, e3, master):
             else:
                 option2_button_color = [215, 132, 121]
                 option2(screen, "Less caffeine", option2_button_color)
-            
             if 400+250 > pos[0] > 400 and 600+100 > pos[1] > 600:
                 option3_button_color = [55, 115, 250]
                 option3(screen, "Both", option3_button_color)
@@ -304,18 +424,14 @@ def clueOne(e1, e2, e3, master):
                     option3_button_color = [215, 132, 121]
                     option3(screen, "Both", option3_button_color)
                     clueTwo(name, major, guide, wrong_answers)
-                    
             else:
                 option3_button_color = [215, 132, 121]
                 option3(screen, "Both", option3_button_color)
-                
             if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     tour_text(olmsted)
-        
             if event.type == VIDEORESIZE:
                 make_fullscreen(background, event)
-
 def clueTwo(name, major, guide, wrong_answers):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
@@ -327,482 +443,1052 @@ def clueTwo(name, major, guide, wrong_answers):
     elif guide == "Gollum":
         background = pygame.image.load('Librarygollum.JPG')
     create_screen(screen, 'Library', background)
-    
     option1_button_color = [215,132,121]
     option2_button_color = [215,132,121]
     option3_button_color = [215,132,121]
     loop = True 
-    
     while(loop): 
+
         riddle_display(screen, "Who was Bilbo's adopted heir in the Lord of The Rings?")
+
         help_button(screen, name)
+
         
+
         option1(screen, "Frodo", option1_button_color)
+
         option2(screen, "Drogo", option2_button_color)
+
         option3(screen, "Otho", option3_button_color)
+
     
+
         pygame.event.pump()
+
     
+
         for event in pygame.event.get():
+
             pos = pygame.mouse.get_pos()
+
             if event.type == pygame.quit: 
+
                 pygame.display.quite()
+
                 
+
             if 700+250 > pos[0] > 700 and 600+100 > pos[1] > 600:
+
                 option1_button_color = [55, 115, 250]
+
                 option1(screen, "Frodo", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option1_button_color = [55, 115, 150]
+
                     option1(screen, "Frodo", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option1_button_color = [215, 132, 121]
+
                     option1(screen, "Frodo", option1_button_color)
+
                     clueThree(name, major, guide, wrong_answers)
+
       
+
             else:
+
                 option1_button_color = [215, 132, 121]
+
                 option1(screen, "Frodo", option1_button_color)
+
                 
+
             if 1000+250 > pos[0] > 1000 and 600+100 > pos[1] > 600:
+
                 option2_button_color = [55, 115, 250]
+
                 option2(screen, "Drogo", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option2_button_color = [55, 115, 150]
+
                     option2(screen, "Drogo", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option2_button_color = [215, 132, 121]
+
                     option2(screen, "Drogo", option2_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
             else:
+
                 option2_button_color = [215, 132, 121]
+
                 option2(screen, "Drogo", option2_button_color)
+
             
+
             if 400+250 > pos[0] > 400 and 600+100 > pos[1] > 600:
+
                 option3_button_color = [55, 115, 250]
+
                 option3(screen, "Otho", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option3_button_color = [55, 115, 150]
+
                     option3(screen, "Otho", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option3_button_color = [215, 132, 121]
+
                     option3(screen, "Otho", option3_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
                     
+
             else:
+
                 option3_button_color = [215, 132, 121]
+
                 option3(screen, "Otho", option3_button_color)
+
             
+
             if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     tour_text(library)
+
         
+
             if event.type == VIDEORESIZE:
+
                 make_fullscreen(background, event)
+
+
 
 def clueThree(name, major, guide, wrong_answers):
+
     pygame.display.quit()
+
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+
     street = "We have now come to the famous painted street. \nPainted street runs down the middle of campus and every year \nstudents repaint the street with new works of art.\nThe anual street painting consists of a very colorful frenzy\nin which students cover both themselves and each other with paint."
+
     if guide == "Santa":
+
         background = pygame.image.load('paintedStreetsanta.JPG')
+
     elif guide == "Harry Potter":
+
         background = pygame.image.load('paintedStreethp.JPG')
+
     elif guide == "Gollum":
+
         background = pygame.image.load('paintedStreetgollum.JPG')
+
     create_screen(screen, 'Painted Street', background)
 
+
+
     option1_button_color = [215,132,121]
+
     option2_button_color = [215,132,121]
+
     option3_button_color = [215,132,121]
+
     loop = True 
+
     
+
     while(loop): 
+
         riddle_display(screen, "How many gallons of paint does it take to paint the White House?")
+
         help_button(screen, name)
+
         option1(screen, "570", option1_button_color)
+
         option2(screen, "980", option2_button_color)
+
         option3(screen, "650", option3_button_color)
+
     
+
         pygame.event.pump()
+
     
+
         for event in pygame.event.get():
+
             pos = pygame.mouse.get_pos()
+
             if event.type == pygame.quit: 
+
                 pygame.display.quite()
+
                 
+
             if 700+250 > pos[0] > 700 and 600+100 > pos[1] > 600:
+
                 option1_button_color = [55, 115, 250]
+
                 option1(screen, "570", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option1_button_color = [55, 115, 150]
+
                     option1(screen, "570", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option1_button_color = [215, 132, 121]
+
                     option1(screen, "570", option1_button_color)
+
                     clueFour(name, major, guide, wrong_answers)
 
+
+
             else:
+
                 option1_button_color = [215, 132, 121]
+
                 option1(screen, "570", option1_button_color)
+
                 
+
             if 1000+250 > pos[0] > 1000 and 600+100 > pos[1] > 600:
+
                 option2_button_color = [55, 115, 250]
+
                 option2(screen, "980", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option2_button_color = [55, 115, 150]
+
                     option2(screen, "980", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option2_button_color = [215, 132, 121]
+
                     option2(screen, "980", option2_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
             else:
+
                 option2_button_color = [215, 132, 121]
+
                 option2(screen, "980", option2_button_color)
+
             
+
             if 400+250 > pos[0] > 400 and 600+100 > pos[1] > 600:
+
                 option3_button_color = [55, 115, 250]
+
                 option3(screen, "650", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option3_button_color = [55, 115, 150]
+
                     option3(screen, "650", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option3_button_color = [215, 132, 121]
+
                     option3(screen, "650", option3_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
                     
+
             else:
+
                 option3_button_color = [215, 132, 121]
+
                 option3(screen, "650", option3_button_color)
+
                 
+
             if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     tour_text(street)
+
         
+
             if event.type == VIDEORESIZE:
+
                 make_fullscreen(background, event)
+
     
+
+
 
 def clueFour(name, major, guide, wrong_answers):
+
     pygame.display.quit()
+
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+
     chapel = "Did you know that Drake University used to be a Bible school back in 1881?\nThis is the chapel from way back then. It is a very small, \nvery round building that is known to give off some creepy vibes! \nThe chapel is no longer used today but is popular for being the perfect spot \nto shoot creepy photos and videos."
+
     if guide == "Santa":
+
         background = pygame.image.load('chapelsanta.JPG')
+
     elif guide == "Harry Potter":
+
         background = pygame.image.load('chapelhp.JPG')
+
     elif guide == "Gollum":
+
         background = pygame.image.load('chapelgollum.JPG')
+
     create_screen(screen, 'Chapel', background)
 
+
+
     option1_button_color = [215,132,121]
+
     option2_button_color = [215,132,121]
+
     option3_button_color = [215,132,121]
+
     loop = True 
+
     
+
     while(loop): 
+
         riddle_display(screen, "In Greek mythology, what is the offspring of a god and mortal called?")
+
         help_button(screen, name)
+
         option1(screen, "A Titan", option1_button_color)
+
         option2(screen, "A Hero", option2_button_color)
+
         option3(screen, "An oracle", option3_button_color)
+
     
+
         pygame.event.pump()
+
     
+
         for event in pygame.event.get():
+
             pos = pygame.mouse.get_pos()
+
             if event.type == pygame.quit: 
+
                 pygame.display.quite()
+
                 
+
             if 700+250 > pos[0] > 700 and 600+100 > pos[1] > 600:
+
                 option1_button_color = [55, 115, 250]
+
                 option1(screen, "A Titan", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option1_button_color = [55, 115, 150]
+
                     option1(screen, "A Titan", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option1_button_color = [215, 132, 121]
+
                     option1(screen, "A Titan", option1_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
  
+
             else:
+
                 option1_button_color = [215, 132, 121]
+
                 option1(screen, "A Titan", option1_button_color)
+
                 
+
             if 1000+250 > pos[0] > 1000 and 600+100 > pos[1] > 600:
+
                 option2_button_color = [55, 115, 250]
+
                 option2(screen, "A Hero", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option2_button_color = [55, 115, 150]
+
                     option2(screen, "A Hero", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option2_button_color = [215, 132, 121]
+
                     option2(screen, "A Hero", option2_button_color)
+
                     clueFive(name, major, guide, wrong_answers)
+
             else:
+
                 option2_button_color = [215, 132, 121]
+
                 option2(screen, "A Hero", option2_button_color)
+
             
+
             if 400+250 > pos[0] > 400 and 600+100 > pos[1] > 600:
+
                 option3_button_color = [55, 115, 250]
+
                 option3(screen, "An oracle", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option3_button_color = [55, 115, 150]
+
                     option3(screen, "An oracle", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option3_button_color = [215, 132, 121]
+
                     option3(screen, "An oracle", option3_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
                     
+
             else:
+
                 option3_button_color = [215, 132, 121]
+
                 option3(screen, "An oracle", option3_button_color)
+
                 
+
             if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     tour_text(chapel)
+
         
+
             if event.type == VIDEORESIZE:
+
                 make_fullscreen(background, event)
+
+
 
 def clueFive(name, major, guide, wrong_answers):
+
     pygame.display.quit()
+
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+
     sheslow = "This is the Sheslow Auditorium found in Old Main. \n The auditorium holds 775 guests and is used for all kinds of events from \nconcerts, recitals, guest speakers, and campus programs."
+
     if guide == "Santa":
+
         background = pygame.image.load('sheslowsanta.JPG')
+
     elif guide == "Harry Potter":
+
         background = pygame.image.load('sheslowhp.JPG')
+
     elif guide == "Gollum":
+
         background = pygame.image.load('sheslowgollum.JPG')
+
     create_screen(screen, 'Sheslow', background)
 
+
+
     option1_button_color = [215,132,121]
+
     option2_button_color = [215,132,121]
+
     option3_button_color = [215,132,121]
+
     loop = True 
+
     
+
     while(loop): 
+
         riddle_display(screen, "Schweigt stille plaudert nicht is an opera by Bach about what?")
+
         help_button(screen, name)
+
         option1(screen, "Love", option1_button_color)
+
         option2(screen, "Smoking", option2_button_color)
+
         option3(screen, "Coffee", option3_button_color)
 
+
+
         pygame.event.pump()
+
     
+
         for event in pygame.event.get():
+
             pos = pygame.mouse.get_pos()
+
             if event.type == pygame.quit: 
+
                 pygame.display.quite()
+
                 
+
             if 700+250 > pos[0] > 700 and 600+100 > pos[1] > 600:
+
                 option1_button_color = [55, 115, 250]
+
                 option1(screen, "Love", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option1_button_color = [55, 115, 150]
+
                     option1(screen, "Love", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option1_button_color = [215, 132, 121]
+
                     option1(screen, "Love", option1_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
   
+
             else:
+
                 option1_button_color = [215, 132, 121]
+
                 option1(screen, "Love", option1_button_color)
+
                 
+
             if 1000+250 > pos[0] > 1000 and 600+100 > pos[1] > 600:
+
                 option2_button_color = [55, 115, 250]
+
                 option2(screen, "Smoking", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option2_button_color = [55, 115, 150]
+
                     option2(screen, "Smoking", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option2_button_color = [215, 132, 121]
+
                     option2(screen, "Smoking", option2_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
+
                         wrong_answer()
+
                     
+
             else:
+
                 option2_button_color = [215, 132, 121]
+
                 option2(screen, "Smoking", option2_button_color)
+
             
+
             if 400+250 > pos[0] > 400 and 600+100 > pos[1] > 600:
+
                 option3_button_color = [55, 115, 250]
+
                 option3(screen, "Coffee", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option3_button_color = [55, 115, 150]
+
                     option3(screen, "Coffee", option3_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option3_button_color = [215, 132, 121]
+
                     option3(screen, "Coffee", option3_button_color)
+
                     clueSix(name, major, guide, wrong_answers)
+
                     
+
             else:
+
                 option3_button_color = [215, 132, 121]
+
                 option3(screen, "Coffee", option3_button_color)
+
                 
+
             if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     tour_text(sheslow)
+
         
+
             if event.type == VIDEORESIZE:
+
                 make_fullscreen(background, event)
+
+
 
 def clueSix(name, major, guide, wrong_answers):
+
     pygame.display.quit()
+
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+
     relays = "The Drake Stadium is the home of the Drake Relays, a world class track and field meet.\nRelays are one of the biggest events in Des Moines each year\nand have attracted athletes from all over. Take a look at your trivia options.\nEach one competed in the Drake Relays but only one fullfills the trivia question."
+
     if guide == "Santa":
+
         background = pygame.image.load('stadiumsanta.JPG')
+
     elif guide == "Harry Potter":
+
         background = pygame.image.load('stadiumhp.JPG')
+
     elif guide == "Gollum":
+
         background = pygame.image.load('stadiumgollum.JPG')
+
     create_screen(screen, 'Stadium', background)
 
+
+
     option1_button_color = [215,132,121]
+
     option2_button_color = [215,132,121]
+
     option3_button_color = [215,132,121]
+
     loop = True 
+
     
+
     while(loop): 
+
         riddle_display(screen, "Which Drake Relays winner became the world's fastest human and won the super bowl?")
+
         help_button(screen, name)
+
         option1(screen, "Roger Craig", option1_button_color)
+
         option2(screen, "Bob Hayes", option2_button_color)
+
         option3(screen, "Rod Woodson", option3_button_color)
 
+
+
         pygame.event.pump()
+
     
+
         for event in pygame.event.get():
+
             pos = pygame.mouse.get_pos()
+
             if event.type == pygame.quit: 
+
                 pygame.display.quite()
+
                 
+
             if 700+250 > pos[0] > 700 and 600+100 > pos[1] > 600:
+
                 option1_button_color = [55, 115, 250]
+
                 option1(screen, "Roger Craig", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
                     option1_button_color = [55, 115, 150]
+
                     option1(screen, "Roger Craig", option1_button_color)
+
                 if event.type == pygame.MOUSEBUTTONUP:
+
                     option1_button_color = [215, 132, 121]
+
                     option1(screen, "Roger Craig", option1_button_color)
+
                     wrong_answers += 1
+
                     if wrong_answers > 3:
+
                         game_over()
+
                     else:
-                        wrong_answer()
- 
-            else:
-                option1_button_color = [215, 132, 121]
-                option1(screen, "Roger Craig", option1_button_color)
-                
-            if 1000+250 > pos[0] > 1000 and 600+100 > pos[1] > 600:
-                option2_button_color = [55, 115, 250]
-                option2(screen, "Bob Hayes", option2_button_color)
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    option2_button_color = [55, 115, 150]
-                    option2(screen, "Bob Hayes", option2_button_color)
-                if event.type == pygame.MOUSEBUTTONUP:
-                    option2_button_color = [215, 132, 121]
-                    option2(screen, "Bob Hayes", option2_button_color)
-                    challenge(name, major, guide)
-                    
-            else:
-                option2_button_color = [215, 132, 121]
-                option2(screen, "Bob Hayes", option2_button_color)
-            
-            if 400+250 > pos[0] > 400 and 600+100 > pos[1] > 600:
-                option3_button_color = [55, 115, 250]
-                option3(screen, "Rod Woodson", option3_button_color)
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    option3_button_color = [55, 115, 150]
-                    option3(screen, "Rod Woodson", option3_button_color)
-                if event.type == pygame.MOUSEBUTTONUP:
-                    option3_button_color = [215, 132, 121]
-                    option3(screen, "Rod Woodson", option3_button_color)
-                    wrong_answers += 1
-                    if wrong_answers > 3:
-                        game_over()
-                    else:
+
                         wrong_answer()
 
+ 
+
             else:
-                option3_button_color = [215, 132, 121]
-                option3(screen, "Rod Woodson", option3_button_color)
+
+                option1_button_color = [215, 132, 121]
+
+                option1(screen, "Roger Craig", option1_button_color)
+
                 
-            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+
+            if 1000+250 > pos[0] > 1000 and 600+100 > pos[1] > 600:
+
+                option2_button_color = [55, 115, 250]
+
+                option2(screen, "Bob Hayes", option2_button_color)
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    option2_button_color = [55, 115, 150]
+
+                    option2(screen, "Bob Hayes", option2_button_color)
+
+                if event.type == pygame.MOUSEBUTTONUP:
+
+                    option2_button_color = [215, 132, 121]
+
+                    option2(screen, "Bob Hayes", option2_button_color)
+
+                    challenge(name, major, guide)
+
+                    
+
+            else:
+
+                option2_button_color = [215, 132, 121]
+
+                option2(screen, "Bob Hayes", option2_button_color)
+
+            
+
+            if 400+250 > pos[0] > 400 and 600+100 > pos[1] > 600:
+
+                option3_button_color = [55, 115, 250]
+
+                option3(screen, "Rod Woodson", option3_button_color)
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    option3_button_color = [55, 115, 150]
+
+                    option3(screen, "Rod Woodson", option3_button_color)
+
+                if event.type == pygame.MOUSEBUTTONUP:
+
+                    option3_button_color = [215, 132, 121]
+
+                    option3(screen, "Rod Woodson", option3_button_color)
+
+                    wrong_answers += 1
+
+                    if wrong_answers > 3:
+
+                        game_over()
+
+                    else:
+
+                        wrong_answer()
+
+
+
+            else:
+
+                option3_button_color = [215, 132, 121]
+
+                option3(screen, "Rod Woodson", option3_button_color)
+
+                
+
+            if 10+300 > pos[0] > 100 and 350+300 > pos[1] > 350:
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
                     tour_text(relays)
+
         
+
             if event.type == VIDEORESIZE:
+
+                make_fullscreen(background, event)
+
+                
+
+def challenge(name, major, guide):
+
+    pygame.display.quit()
+
+    screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
+
+    background = pygame.image.load('hidden.JPG')
+
+    create_screen(screen, "Challenge", background)
+
+    
+
+    loop = True 
+
+    
+
+    while(loop): 
+
+        challenge_display(screen, "Someone is hoarding all the Griff snuggles for themself!", "The culprit has challenged you to a game of connect four to earn a cuddle session.")
+
+        pygame.event.pump()
+
+        
+
+        
+
+        for event in pygame.event.get():
+
+            pos = pygame.mouse.get_pos()
+
+            if event.type == pygame.quit: 
+
+                pygame.display.quite()
+
+                
+
+            if 100+350 > pos[0] > 100 and 600+100 > pos[1] > 600:
+
+                challenge_button_color = [55, 115, 250]
+
+                challenge_button(screen, "Accept Challenge", challenge_button_color)
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    challenge_button_color = [55, 115, 150]
+
+                    challenge_button(screen, "Accept Challenge", challenge_button_color)
+
+                if event.type == pygame.MOUSEBUTTONUP:
+
+                    challenge_button_color = [215, 132, 121]
+
+                    challenge_button(screen, "Accept Challenge", challenge_button_color)
+                    connect_four(screen)
+
+ 
+
+            else:
+
+                challenge_button_color = [215, 132, 121]
+
+                challenge_button(screen, "Accept Challenge", challenge_button_color)
+
+                
+
+            if event.type == VIDEORESIZE:
+
                 make_fullscreen(background, event)
                 
-def challenge(name, major, guide):
+def connect_four(screen):
+    BLUE = (0,0,255)
+    BLACK = (0,0,0)
+    RED = (255,0,0)
+    YELLOW = (255,255,0)
+    ROW_COUNT = 6
+    COLUMN_COUNT = 7
+    PLAYER = 0
+    AI = 1
+    EMPTY = 0
+    PLAYER_PIECE = 1
+    AI_PIECE = 2
+    WINDOW_LENGTH = 4
+    board = create_board(ROW_COUNT,COLUMN_COUNT)
+    game_over = False
+    SQUARESIZE = 100
+    width = COLUMN_COUNT * SQUARESIZE
+    height = (ROW_COUNT+1) * SQUARESIZE
+    size = (width, height)
+    RADIUS = int(SQUARESIZE/2 - 5)
+    draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED)
+    pygame.display.update()
+    turn = random.randint(PLAYER, AI)
+
+    while not game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.display.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEMOTION:
+                pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+                posx = event.pos[0]
+                if turn == PLAYER:
+                    pygame.draw.circle(screen, RED, (posx, int(SQUARESIZE/2)), RADIUS)
+            pygame.display.update()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+                if turn == PLAYER:
+                    posx = event.pos[0]
+                    col = int(math.floor(posx/SQUARESIZE))
+                    if is_valid_location(board, col, ROW_COUNT):
+                        row = get_next_open_row(board, col, ROW_COUNT)
+                        drop_piece(board, row, col, PLAYER_PIECE)
+                        if winning_move(board, PLAYER_PIECE, COLUMN_COUNT, ROW_COUNT):
+                            game_ending(PLAYER_PIECE)
+                            game_over = True
+                        turn += 1
+                        turn = turn % 2
+                        draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED)
+        if turn == AI and not game_over:
+            col, minimax_score = minimax(board, 5, -math.inf, math.inf, True,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY)
+            if is_valid_location(board, col, ROW_COUNT):
+                row = get_next_open_row(board, col, ROW_COUNT)
+                drop_piece(board, row, col, AI_PIECE)
+                if winning_move(board, AI_PIECE, COLUMN_COUNT, ROW_COUNT):
+                    game_ending(True)
+                    game_over = True
+                draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED)
+                turn += 1
+                turn = turn % 2
+        if game_over:
+            pygame.time.wait(3000)
+            
+def game_ending(winner):
     pygame.display.quit()
     screen = pygame.display.set_mode((500, 500), HWSURFACE | DOUBLEBUF | RESIZABLE)
-    background = pygame.image.load('hidden.JPG')
-    create_screen(screen, "Challenge", background)
-    
-    loop = True 
-    
-    while(loop): 
-        challenge_display(screen, "Someone is hoarding all the Griff snuggles for themself!", "The culprit has challenged you to a game of connect four to earn a cuddle session.")
-        pygame.event.pump()
+    if winner == True:
+        background = pygame.image.load('fail.JPG')
+        create_screen(screen, "You Lost", background)
+        pygame.mixer.music.load("lost.mp3")
+        pygame.mixer.music.set_volume(1)
+        pygame.mixer.music.play(0)
+        loop = True 
+        while(loop): 
+            challenge_display(screen, "You Lost!", "Looks like you will have to wait on the puppy snuggles.")
+            pygame.event.pump()
+            for event in pygame.event.get():
+                pos = pygame.mouse.get_pos()
+                if event.type == pygame.quit: 
+                    pygame.display.quite()
+                if event.type == VIDEORESIZE:
+                    make_fullscreen(background, event)
+    else:
+        background = pygame.image.load('griff.JPG')
+        create_screen(screen, "Your Won", background)
+        pygame.mixer.music.load("DSong.mp3")
+        pygame.mixer.music.set_volume(1)
+        pygame.mixer.music.play(-1)
+        loop = True 
+        while(loop): 
+            challenge_display(screen, "You win!", "Here's Griff!")
+            pygame.event.pump()
+            for event in pygame.event.get():
+                pos = pygame.mouse.get_pos()
+                if event.type == pygame.quit: 
+                    pygame.display.quite()
+                if event.type == VIDEORESIZE:
+                    make_fullscreen(background, event)
+
         
-        
-        for event in pygame.event.get():
-            pos = pygame.mouse.get_pos()
-            if event.type == pygame.quit: 
-                pygame.display.quite()
-                
-            if 100+350 > pos[0] > 100 and 600+100 > pos[1] > 600:
-                challenge_button_color = [55, 115, 250]
-                challenge_button(screen, "Accept Challenge", challenge_button_color)
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    challenge_button_color = [55, 115, 150]
-                    challenge_button(screen, "Accept Challenge", challenge_button_color)
-                if event.type == pygame.MOUSEBUTTONUP:
-                    challenge_button_color = [215, 132, 121]
-                    challenge_button(screen, "Accept Challenge", challenge_button_color)
- 
-            else:
-                challenge_button_color = [215, 132, 121]
-                challenge_button(screen, "Accept Challenge", challenge_button_color)
-                
-            if event.type == VIDEORESIZE:
-                make_fullscreen(background, event)
-        
+
 welcomeScreen()
