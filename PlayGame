@@ -1,3 +1,5 @@
+#Rebecca Eiland
+#Capstone project
 #Resources:
 #https://www.freecodecamp.org/
 #https://pythonprogramming.net/pygame-buttons-part-1-button-rectangle/
@@ -147,95 +149,95 @@ def option3(screen, text, option3_button_color):
     screen.blit(textSurf, textEllipse)
     pygame.display.update()
     
-def create_board(ROW_COUNT,COLUMN_COUNT):
-    board = np.zeros((ROW_COUNT,COLUMN_COUNT))
+def create_board(row_count,column_count):
+    board = np.zeros((row_count,column_count))
     return board
     
 def drop_piece(board, row, col, piece):
     board[row][col] = piece
     
-def is_valid_location(board, col, ROW_COUNT):
-    return board[ROW_COUNT-1][col] == 0
+def is_valid_location(board, col, row_count):
+    return board[row_count-1][col] == 0
     
-def get_next_open_row(board, col, ROW_COUNT):
-    for r in range(ROW_COUNT):
+def get_next_open_row(board, col, row_count):
+    for r in range(row_count):
         if board[r][col] == 0:
             return r
             
-def winning_move(board, piece, COLUMN_COUNT, ROW_COUNT):
-    for c in range(COLUMN_COUNT-3):
-        for r in range(ROW_COUNT):
+def winning_move(board, piece, column_count, row_count):
+    for c in range(column_count-3):
+        for r in range(row_count):
             if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
                 return True
-    for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT-3):
+    for c in range(column_count):
+        for r in range(row_count-3):
             if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
                 return True
-    for c in range(COLUMN_COUNT-3):
-            for r in range(ROW_COUNT-3):
+    for c in range(column_count-3):
+            for r in range(row_count-3):
                 if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
                     return True
-    for c in range(COLUMN_COUNT-3):
-            for r in range(3, ROW_COUNT):
+    for c in range(column_count-3):
+            for r in range(3, row_count):
                 if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
                     return True
                     
-def evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY):
+def evaluate_window(window, piece, player_piece, computer_piece, empty):
     score = 0
-    opp_piece = PLAYER_PIECE
-    if piece == PLAYER_PIECE:
-        opp_piece = AI_PIECE
+    opp_piece = player_piece
+    if piece == player_piece:
+        opp_piece = computer_piece
     if window.count(piece) == 4:
         score += 100
     return score
     
-def score_position(board,piece,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY):
+def score_position(board,piece,column_count,row_count,window_length,player_piece, computer_piece, empty):
     score = 0
-    center_array = [int(i) for i in list(board[:, COLUMN_COUNT//2])]
+    center_array = [int(i) for i in list(board[:, column_count//2])]
     center_count = center_array.count(piece)
     score += center_count * 3
-    for r in range(ROW_COUNT):
+    for r in range(row_count):
         row_array = [int(i) for i in list(board[r,:])]
-        for c in range(COLUMN_COUNT-3):
-            window = row_array[c:c+WINDOW_LENGTH]
-            score += evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY)
-    for c in range(COLUMN_COUNT):
+        for c in range(column_count-3):
+            window = row_array[c:c+window_length]
+            score += evaluate_window(window, piece, player_piece, computer_piece, empty)
+    for c in range(column_count):
         col_array = [int(i) for i in list(board[:,c])]
-        for r in range(ROW_COUNT-3):
-            window = col_array[r:r+WINDOW_LENGTH]
-            score += evaluate_window(window, piece, PLAYER_PIECE, AI_PIECE, EMPTY)
+        for r in range(row_count-3):
+            window = col_array[r:r+window_length]
+            score += evaluate_window(window, piece, player_piece, computer_piece, empty)
     return score
     
 def is_terminal_node(board):
-    ROW_COUNT = 6
-    COLUMN_COUNT = 7
-    PLAYER = 0
-    AI = 1
-    PLAYER_PIECE = 1
-    AI_PIECE = 2
-    return winning_move(board, PLAYER_PIECE, COLUMN_COUNT, ROW_COUNT) or winning_move(board, AI_PIECE, COLUMN_COUNT, ROW_COUNT) or len(get_valid_locations(board,COLUMN_COUNT,ROW_COUNT)) == 0
+    row_count = 6
+    column_count = 7
+    player = 0
+    computer = 1
+    player_piece = 1
+    computer_piece = 2
+    return winning_move(board, player_piece, column_count, row_count) or winning_move(board, computer_piece, column_count, row_count) or len(get_valid_locations(board,column_count,row_count)) == 0
    
-def minimax(board, depth, alpha, beta, maximizingPlayer,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY):
-    valid_locations = get_valid_locations(board,COLUMN_COUNT,ROW_COUNT)
+def minimax(board, depth, alpha, beta, maximizingplayer,column_count,row_count,window_length,player_piece, computer_piece, empty):
+    valid_locations = get_valid_locations(board,column_count,row_count)
     is_terminal = is_terminal_node(board)
     if depth == 0 or is_terminal:
         if is_terminal:
-            if winning_move(board, AI_PIECE, COLUMN_COUNT, ROW_COUNT):
+            if winning_move(board, computer_piece, column_count, row_count):
                 return (None, 100000000000000)
-            elif winning_move(board, PLAYER_PIECE, COLUMN_COUNT, ROW_COUNT):
+            elif winning_move(board, player_piece, column_count, row_count):
                 return (None, -10000000000000)
             else: # Game is over, no more valid moves
                 return (None, 0)
         else: # Depth is zero
-            return (None, score_position(board, AI_PIECE,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY))
-    if maximizingPlayer:
+            return (None, score_position(board, computer_piece,column_count,row_count,window_length,player_piece, computer_piece, empty))
+    if maximizingplayer:
         value = -math.inf
         column = random.choice(valid_locations)
         for col in valid_locations:
-            row = get_next_open_row(board, col, ROW_COUNT)
+            row = get_next_open_row(board, col, row_count)
             b_copy = board.copy()
-            drop_piece(b_copy, row, col, AI_PIECE)
-            new_score = minimax(b_copy, depth-1, alpha, beta, False,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY)[1]
+            drop_piece(b_copy, row, col, computer_piece)
+            new_score = minimax(b_copy, depth-1, alpha, beta, False,column_count,row_count,window_length,player_piece, computer_piece, empty)[1]
             if new_score > value:
                 value = new_score
                 column = col
@@ -247,10 +249,10 @@ def minimax(board, depth, alpha, beta, maximizingPlayer,COLUMN_COUNT,ROW_COUNT,W
         value = math.inf
         column = random.choice(valid_locations)
         for col in valid_locations:
-            row = get_next_open_row(board, col, ROW_COUNT)
+            row = get_next_open_row(board, col, row_count)
             b_copy = board.copy()
-            drop_piece(b_copy, row, col, PLAYER_PIECE)
-            new_score = minimax(b_copy, depth-1, alpha, beta, True,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY)[1]
+            drop_piece(b_copy, row, col, player_piece)
+            new_score = minimax(b_copy, depth-1, alpha, beta, True,column_count,row_count,window_length,player_piece, computer_piece, empty)[1]
             if new_score < value:
                 value = new_score
                 column = col
@@ -259,29 +261,29 @@ def minimax(board, depth, alpha, beta, maximizingPlayer,COLUMN_COUNT,ROW_COUNT,W
                 break
         return column, value
         
-def get_valid_locations(board,COLUMN_COUNT,ROW_COUNT):
+def get_valid_locations(board,column_count,row_count):
     valid_locations = []
-    for col in range(COLUMN_COUNT):
-        if is_valid_location(board, col, ROW_COUNT):
+    for col in range(column_count):
+        if is_valid_location(board, col, row_count):
             valid_locations.append(col)
     return valid_locations
     
-def draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED):
-    SQUARESIZE = 100
-    width = COLUMN_COUNT * SQUARESIZE
-    height = (ROW_COUNT+1) * SQUARESIZE
+def draw_board(screen,board,row_count,column_count,player_piece,computer_piece,blue,black,yellow,red):
+    squaresize = 100
+    width = column_count * squaresize
+    height = (row_count+1) * squaresize
     size = (width, height)
-    RADIUS = int(SQUARESIZE/2 - 5)
-    for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT):
-            pygame.draw.rect(screen, BLUE, (c*SQUARESIZE, r*SQUARESIZE+SQUARESIZE, SQUARESIZE, SQUARESIZE))
-            pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE+SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)), RADIUS)
-    for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT):
-            if board[r][c] == PLAYER_PIECE:
-                pygame.draw.circle(screen, RED, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
-            elif board[r][c] == AI_PIECE: 
-                pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
+    radius = int(squaresize/2 - 5)
+    for c in range(column_count):
+        for r in range(row_count):
+            pygame.draw.rect(screen, blue, (c*squaresize, r*squaresize+squaresize, squaresize, squaresize))
+            pygame.draw.circle(screen, black, (int(c*squaresize+squaresize/2), int(r*squaresize+squaresize+squaresize/2)), radius)
+    for c in range(column_count):
+        for r in range(row_count):
+            if board[r][c] == player_piece:
+                pygame.draw.circle(screen, red, (int(c*squaresize+squaresize/2), height-int(r*squaresize+squaresize/2)), radius)
+            elif board[r][c] == computer_piece: 
+                pygame.draw.circle(screen, yellow, (int(c*squaresize+squaresize/2), height-int(r*squaresize+squaresize/2)), radius)
     pygame.display.update()
     
 def welcomeScreen():
@@ -861,28 +863,28 @@ def challenge(name, major, guide):
                 make_fullscreen(background, event)
                 
 def connect_four(screen):
-    BLUE = (0,0,255)
-    BLACK = (0,0,0)
-    RED = (255,0,0)
-    YELLOW = (255,255,0)
-    ROW_COUNT = 6
-    COLUMN_COUNT = 7
-    PLAYER = 0
-    AI = 1
-    EMPTY = 0
-    PLAYER_PIECE = 1
-    AI_PIECE = 2
-    WINDOW_LENGTH = 4
-    board = create_board(ROW_COUNT,COLUMN_COUNT)
+    blue = (0,0,255)
+    black = (0,0,0)
+    red = (255,0,0)
+    yellow = (255,255,0)
+    row_count = 6
+    column_count = 7
+    player = 0
+    computer = 1
+    empty = 0
+    player_piece = 1
+    computer_piece = 2
+    window_length = 4
+    board = create_board(row_count,column_count)
     game_over = False
-    SQUARESIZE = 100
-    width = COLUMN_COUNT * SQUARESIZE
-    height = (ROW_COUNT+1) * SQUARESIZE
+    squaresize = 100
+    width = column_count * squaresize
+    height = (row_count+1) * squaresize
     size = (width, height)
-    RADIUS = int(SQUARESIZE/2 - 5)
-    draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED)
+    radius = int(squaresize/2 - 5)
+    draw_board(screen,board,row_count,column_count,player_piece,computer_piece,blue,black,yellow,red)
     pygame.display.update()
-    turn = random.randint(PLAYER, AI)
+    turn = random.randint(player, computer)
 
     while not game_over:
         for event in pygame.event.get():
@@ -890,34 +892,34 @@ def connect_four(screen):
                 pygame.display.quit()
                 sys.exit()
             if event.type == pygame.MOUSEMOTION:
-                pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+                pygame.draw.rect(screen, black, (0,0, width, squaresize))
                 posx = event.pos[0]
-                if turn == PLAYER:
-                    pygame.draw.circle(screen, RED, (posx, int(SQUARESIZE/2)), RADIUS)
+                if turn == player:
+                    pygame.draw.circle(screen, red, (posx, int(squaresize/2)), radius)
             pygame.display.update()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
-                if turn == PLAYER:
+                pygame.draw.rect(screen, black, (0,0, width, squaresize))
+                if turn == player:
                     posx = event.pos[0]
-                    col = int(math.floor(posx/SQUARESIZE))
-                    if is_valid_location(board, col, ROW_COUNT):
-                        row = get_next_open_row(board, col, ROW_COUNT)
-                        drop_piece(board, row, col, PLAYER_PIECE)
-                        if winning_move(board, PLAYER_PIECE, COLUMN_COUNT, ROW_COUNT):
+                    col = int(math.floor(posx/squaresize))
+                    if is_valid_location(board, col, row_count):
+                        row = get_next_open_row(board, col, row_count)
+                        drop_piece(board, row, col, player_piece)
+                        if winning_move(board, player_piece, column_count, row_count):
                             game_ending(False)
                             game_over = True
                         turn += 1
                         turn = turn % 2
-                        draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED)
-        if turn == AI and not game_over:
-            col, minimax_score = minimax(board, 5, -math.inf, math.inf, True,COLUMN_COUNT,ROW_COUNT,WINDOW_LENGTH,PLAYER_PIECE, AI_PIECE, EMPTY)
-            if is_valid_location(board, col, ROW_COUNT):
-                row = get_next_open_row(board, col, ROW_COUNT)
-                drop_piece(board, row, col, AI_PIECE)
-                if winning_move(board, AI_PIECE, COLUMN_COUNT, ROW_COUNT):
+                        draw_board(screen,board,row_count,column_count,player_piece,computer_piece,blue,black,yellow,red)
+        if turn == computer and not game_over:
+            col, minimax_score = minimax(board, 5, -math.inf, math.inf, True,column_count,row_count,window_length,player_piece, computer_piece, empty)
+            if is_valid_location(board, col, row_count):
+                row = get_next_open_row(board, col, row_count)
+                drop_piece(board, row, col, computer_piece)
+                if winning_move(board, computer_piece, column_count, row_count):
                     game_ending(True)
                     game_over = True
-                draw_board(screen,board,ROW_COUNT,COLUMN_COUNT,PLAYER_PIECE,AI_PIECE,BLUE,BLACK,YELLOW,RED)
+                draw_board(screen,board,row_count,column_count,player_piece,computer_piece,blue,black,yellow,red)
                 turn += 1
                 turn = turn % 2
         if game_over:
